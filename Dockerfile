@@ -1,4 +1,4 @@
-FROM python:3.12.8-slim AS runtime
+FROM python:3.12.14-slim-bookworm AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
 RUN groupadd --system forgepulse && useradd --system --gid forgepulse --home-dir /app forgepulse

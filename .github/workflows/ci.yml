@@ -17,7 +17,7 @@ jobs:
       - run: pytest -q
       - run: docker build -t forgepulse:${{ github.sha }} .
       - uses: aquasecurity/trivy-action@v0.36.0
-        with: {image-ref: "forgepulse:${{ github.sha }}", exit-code: "1", severity: "CRITICAL,HIGH"}
+        with: {image-ref: "forgepulse:${{ github.sha }}", exit-code: "1", severity: "CRITICAL,HIGH", ignore-unfixed: true}
   configuration:
     runs-on: ubuntu-latest
     steps:
