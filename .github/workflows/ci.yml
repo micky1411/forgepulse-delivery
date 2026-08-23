@@ -1,0 +1,28 @@
+name: CI Fallback
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12", cache: pip}
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -q
+      - run: docker build -t forgepulse:${{ github.sha }} .
+      - uses: aquasecurity/trivy-action@0.29.0
+        with: {image-ref: "forgepulse:${{ github.sha }}", exit-code: "1", severity: "CRITICAL,HIGH"}
+  configuration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive terraform
+      - run: terraform -chdir=terraform/environments/dev init -backend=false
+      - run: terraform -chdir=terraform/environments/dev validate
+      - uses: azure/setup-helm@v4
+      - run: helm lint helm/forgepulse

@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    environment:
+      APP_VERSION: local
+      GIT_SHA: workspace
+      ENVIRONMENT: local
+    ports: ["8080:8080"]
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    volumes: ["./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
